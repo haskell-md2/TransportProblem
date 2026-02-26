@@ -295,9 +295,27 @@ static void redistributeAlongCycle(Approximation& apr, const vector<Cell>& cycle
         DFSState state(apr.numSuppliers, apr.numConsumers, start);
         
         if (findCycleDFS(apr, si, sj, state, true)) {
+            cout << "----------------------------------------\n";
+            cout << "Найдена перспективная клетка: (" << si + 1 << ", " << sj + 1 << ")\n";
+            cout << "Цикл пересчета:\n";
+            for (size_t k = 0; k < state.path.size(); k++) {
+                const Cell& c = state.path[k];
+                cout << "Пост." << c.row + 1 << " -> Потр." << c.col + 1;
+                cout << (k % 2 == 0 ? " [+]" : " [-]");
+                if (k < state.path.size() - 1) cout << "  ==>  ";
+            }
+            cout << "\n";
+            
+            int minVal = INF;
+            for (size_t k = 1; k < state.path.size(); k += 2) {
+                if (apr.values[state.path[k].row][state.path[k].col] < minVal) {
+                    minVal = apr.values[state.path[k].row][state.path[k].col];
+                }
+            }
+            cout << "Объем груза для переноса (тета): " << minVal << "\n";
+            cout << "----------------------------------------\n";
 
             redistributeAlongCycle(apr, state.path);
-
             if (apr.values[si][sj] == 0) {
                 apr.isEmpty[si][sj] = true;
             }
@@ -307,6 +325,7 @@ static void redistributeAlongCycle(Approximation& apr, const vector<Cell>& cycle
         }
     }
 
+public:
 
     static void printMatrix(const std::vector<std::vector<int>>& matrix, const std::string& name = "Матрица") {
         std::cout << "\n" << name << ":" << std::endl;
@@ -332,29 +351,63 @@ static void redistributeAlongCycle(Approximation& apr, const vector<Cell>& cycle
         return totalCost;
     }
 
-public:
+    static void getOptimal(ProblemData &pb_data, Approximation &apr){
+        int iteration = 1;
+        while(true) {
+            cout << "\n=== Итерация " << iteration++ << " ===" << endl;
+            vector<int> v, u;
 
-    static void getOptimal(ProblemData &pb_data, Approximation  &apr){
+            if(!calculatePotentialsBFS(pb_data, apr, u, v)) {
+                cout << "Ошибка: Граф вырожден (расчет потенциалов не удался)!" << endl;
+                return;
+            }
 
-        vector<int> v;
-        vector<int> u;
+            if(isOptimal(pb_data, apr, u, v)) {
+                cout << "\nРешение оптимально." << endl;
+                printMatrix(apr.values, "Оптимальный план");
+                double res = calculateTotalCost(pb_data, apr);
+                cout << "Минимальная стоимость: " << res << endl;
+                break;
+            }
 
-        calculatePotentialsBFS(pb_data,apr,u,v);
-
-        if(isOptimal(pb_data,apr,u,v)){
-            cout << "Успех" << endl;
-            printMatrix(apr.values,"Оптимальный план");
-            double res = calculateTotalCost(pb_data,apr);
-            cout <<  res << endl;
-            return;
+            runRecountCycle(apr, v, u, pb_data);
         }
-
-        runRecountCycle(apr,v,u,pb_data);
-        getOptimal(pb_data,apr);
-
     }
 
 
+    static Approximation buildNorthWest(const ProblemData& data) {
+        Approximation apr;
+        apr.numSuppliers = data.numSuppliers;
+        apr.numConsumers = data.numConsumers;
+        apr.values.assign(apr.numSuppliers, vector<int>(apr.numConsumers, 0));
+        apr.isEmpty.assign(apr.numSuppliers, vector<bool>(apr.numConsumers, true));
+
+        vector<int> s = data.supply;
+        vector<int> d = data.demand;
+        int i = 0, j = 0;
+
+        while (i < apr.numSuppliers && j < apr.numConsumers) {
+            int take = min(s[i], d[j]);
+            apr.values[i][j] = take;
+            apr.isEmpty[i][j] = false;
+            
+            s[i] -= take;
+            d[j] -= take;
+
+            if (s[i] == 0 && d[j] == 0 && (i < apr.numSuppliers - 1 || j < apr.numConsumers - 1)) {
+                i++;
+                apr.values[i][j] = 0; 
+                apr.isEmpty[i][j] = false;
+            } else if (s[i] == 0) {
+                i++;
+            } else {
+                j++;
+            }
+        }
+        return apr;
+    }
+
 };
+
 
 
