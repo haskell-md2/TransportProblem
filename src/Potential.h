@@ -353,7 +353,7 @@ public:
 
 
     static void getOptimalWrap(ProblemData &pb_data) {
-        Approximation apr = pb_data.first_approximation;
+        Approximation apr = pb_data.getApproximation();
         getOptimal(pb_data, apr);
     }
 

@@ -32,6 +32,9 @@ bool ProblemData::get_is_fictitious_consumer() const {
     return is_fictitious_consumer;
 }
 
+const Approximation & ProblemData::getApproximation() const {
+    return first_approximation;
+}
 
 void ProblemData::set_close() {
 

@@ -38,8 +38,7 @@ int main(){
 
     // Ожидается ответ: 1435
     Potential::getOptimalWrap(pd);
-
-
+    
     std::cout << std::endl;
     std::cout << "Simplex method:" << std::endl;
 

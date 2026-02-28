@@ -27,6 +27,9 @@ class  ProblemData {
     bool is_fictitious_supplier;
     bool is_fictitious_consumer;
 
+    Approximation first_approximation; // НЕ УБИРАТЬ ИЗ PRIVATE, УКУСИТ!!!
+
+
 public:
 
     int numSuppliers;
@@ -40,8 +43,10 @@ public:
     bool get_is_fictitious_supplier() const;
     bool get_is_fictitious_consumer() const;
 
-    Approximation first_approximation;
+    const Approximation& getApproximation() const;
+
     Canonical get_canonical();
+
 };
 
 
