@@ -19,6 +19,9 @@ ProblemData::ProblemData(int num_suppliers, int num_consumers, std::vector<int> 
     if ( sumS != sumD) set_close();
 
     buildNorthWest();
+
+    is_fictitious_consumer = false;
+    is_fictitious_supplier = false;
 }
 
 bool ProblemData::get_is_fictitious_supplier() const {
@@ -44,6 +47,7 @@ void ProblemData::set_close() {
         // Увеличиваем demand и numConsumers
         demand.push_back(static_cast<int>(diff));
         numConsumers += 1;
+        is_fictitious_consumer = true;
     } else { // sumD > sumS
         long long diff = sumD - sumS;
         // Добавляем новую строку поставщика с нулевыми cost'ами длины numConsumers
@@ -52,6 +56,7 @@ void ProblemData::set_close() {
         // Увеличиваем supply и numSuppliers
         supply.push_back(static_cast<int>(diff));
         numSuppliers += 1;
+        is_fictitious_supplier = true;
     }
 
     set_close_final_check();
