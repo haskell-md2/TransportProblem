@@ -1,16 +1,5 @@
 #pragma once
 
-#include <vector>
-#include <iostream>
-
-struct ProblemData {
-    int numSuppliers;
-    int numConsumers;
-    std::vector<int> supply;
-    std::vector<int> demand;
-    std::vector<std::vector<double>> costs;
-};
-
 struct Approximation
 {
     int numSuppliers;
