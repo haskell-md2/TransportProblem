@@ -24,7 +24,7 @@ double calc_simplex_cost(Eigen::VectorXd &simplex_solution, std::vector<std::vec
     return res;
 }
 
-int main(){
+int main(int argc, char* argv[]){
 
     int num_consumers = 6;
     int num_suppliers = 5;
@@ -42,6 +42,25 @@ int main(){
             {5, 8, 6, 4, 3}
         }
     };
+
+    if (argc > 1){
+        if(*argv[1] == 'h'){
+            pd = ProblemData(
+        6,5 , 
+        {180, 220, 150,200,250,150},
+        {170, 200, 190, 210, 220},
+        {
+            {7, 3, 5, 8 ,4},
+            {2, 6, 4, 9, 3},
+            {8, 2, 1, 6, 7},
+            {4, 7, 9, 2, 5},
+            {5, 8, 6, 4, 3},
+            {1,1000,1000,10000,1000}
+        });
+        num_suppliers = 6;
+        }
+        
+    }
 
     // Ожидается ответ: 1435
     Potential::getOptimalWrap(pd);
