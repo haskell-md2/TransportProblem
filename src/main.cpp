@@ -26,15 +26,22 @@ double calc_simplex_cost(Eigen::VectorXd &simplex_solution, std::vector<std::vec
 
 int main(){
 
-    int num_consumers = 4;
-    int num_suppliers = 3;
+    int num_consumers = 6;
+    int num_suppliers = 5;
 
-    ProblemData pd{num_suppliers, num_consumers,{27,20,43},{33,13,27,17},
-    {
-        {14,28,21,28},
-        {10,17,15,24},
-        {14,13,25,21}
-    }};
+    //Ожидаем минимальную стоимость 2440
+    ProblemData pd{
+        5,5 , 
+        {180, 220, 150,200,250},
+        {170, 200, 190, 210, 220},
+        {
+            {7, 3, 5, 8 ,4},
+            {2, 6, 4, 9, 3},
+            {8, 2, 1, 6, 7},
+            {4, 7, 9, 2, 5},
+            {5, 8, 6, 4, 3}
+        }
+    };
 
     // Ожидается ответ: 1435
     Potential::getOptimalWrap(pd);
